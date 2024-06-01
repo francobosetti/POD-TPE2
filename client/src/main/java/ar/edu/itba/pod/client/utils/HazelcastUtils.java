@@ -26,7 +26,7 @@ public class HazelcastUtils {
 
 
     private static String[] getAddresses(String addressesString) {
-        String[] addresses = addressesString.substring(1, addressesString.length() - 1).split(";");
+        String[] addresses = addressesString.split(";");
 
         // Sanitize addresses
         for (int i = 0; i < addresses.length; i++) {

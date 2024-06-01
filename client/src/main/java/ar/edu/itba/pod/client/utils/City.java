@@ -31,7 +31,7 @@ public enum City {
             values -> new Infraction(values[0], values[1]),
             2),
     CHI(
-            "ticketsCHI_100000.csv",
+            "ticketsCHI.csv",
             /*
                 "issue_date", // YYYY-MM-DD hh:mm:ss
                 "license_plate_number",
