@@ -1,26 +1,41 @@
 package ar.edu.itba.pod.server;
 
-import io.grpc.ServerBuilder;
+import com.hazelcast.config.*;
+
+import com.hazelcast.core.Hazelcast;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 
 public class Server {
     private static Logger logger = LoggerFactory.getLogger(Server.class);
 
-    public static void main(String[] args) throws InterruptedException, IOException {
-        logger.info(" Server Starting ...");
+    public static void main(String[] args) {
 
-        int port = 50051;
-        io.grpc.Server server = ServerBuilder.forPort(port)
-                .build();
-        server.start();
-        logger.info("Server started, listening on " + port);
-        server.awaitTermination();
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            logger.info("Shutting down gRPC server since JVM is shutting down");
-            server.shutdown();
-            logger.info("Server shut down");
-        }));
-    }}
+
+        // -------- Configuring Hazelcast --------
+        final Config config = new Config();
+
+        final GroupConfig groupConfig = new GroupConfig().setName("g4").setPassword("g4-pass");
+        config.setGroupConfig(groupConfig);
+
+        final MulticastConfig multicastConfig = new MulticastConfig();
+        final JoinConfig joinConfig = new JoinConfig().setMulticastConfig(multicastConfig);
+
+        final Collection<String> interfaces = Collections.singletonList("192.168.0.*");
+        final InterfacesConfig interfacesConfig =
+                new InterfacesConfig().setInterfaces(interfaces).setEnabled(true);
+
+        final NetworkConfig networkConfig =
+                new NetworkConfig().setJoin(joinConfig).setInterfaces(interfacesConfig);
+
+        config.setNetworkConfig(networkConfig);
+
+        // -------- Starting Hazelcast --------
+
+        logger.info("Starting Hazelcast server");
+         Hazelcast.newHazelcastInstance(config);
+    }
+}
