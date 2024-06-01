@@ -7,6 +7,7 @@ import ar.edu.itba.pod.client.utils.TimeLogger;
 import ar.edu.itba.pod.models.Infraction;
 import ar.edu.itba.pod.models.Ticket;
 import ar.edu.itba.pod.query1.QueryCollator;
+import ar.edu.itba.pod.query1.QueryCombinerFactory;
 import ar.edu.itba.pod.query1.QueryMapper;
 import ar.edu.itba.pod.query1.QueryReducerFactory;
 
@@ -91,6 +92,7 @@ public class Client {
 
             final var future =
                     job.mapper(new QueryMapper())
+                            .combiner(new QueryCombinerFactory())
                             .reducer(new QueryReducerFactory())
                             .submit(new QueryCollator());
 
