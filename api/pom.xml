@@ -11,7 +11,11 @@
   <name>tpe1-g4-api</name>
 
   <dependencies>
-
+    <dependency>
+      <groupId>com.hazelcast</groupId>
+      <artifactId>hazelcast-all</artifactId>
+      <version>${hazelcast.version}</version>
+    </dependency>
     <dependency> <!-- necessary for Java 9+ -->
       <groupId>org.apache.tomcat</groupId>
       <artifactId>annotations-api</artifactId>
