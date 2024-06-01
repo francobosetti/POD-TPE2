@@ -4,10 +4,10 @@ import ar.edu.itba.pod.models.Ticket;
 import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
 
-public class QueryMapper implements Mapper<String, Ticket, String, Long> {
+public class QueryMapper implements Mapper<String, String, String, Long> {
 
     @Override
-    public void map(String s, Ticket ticket, Context<String, Long> context) {
-        context.emit(ticket.infraction().description(), 1L);
+    public void map(String s, String infraction, Context<String, Long> context) {
+        context.emit(infraction, 1L);
     }
 }

@@ -77,8 +77,11 @@ public class Client {
             logger.info("Loading data into Hazelcast");
             timeLogger.logStartedLoadingToHazelcast();
 
-            final IList<Ticket> ticketList = client.getList("query1-ticketList");
-            ticketList.addAll(tickets);
+            final IList<String> ticketInfractions = client.getList("query1-ticketInfractions");
+
+            ticketInfractions.addAll(tickets.stream()
+                    .map(ticket -> ticket.infraction().description())
+                    .toList());
 
             timeLogger.logFinishedLoadingToHazelcast();
 
@@ -86,7 +89,7 @@ public class Client {
             logger.info("Executing MapReduce");
             timeLogger.logStartedMapReduce();
 
-            final var source = KeyValueSource.fromList(ticketList);
+            final var source = KeyValueSource.fromList(ticketInfractions);
             final var jobTracker = client.getJobTracker("g4-query1");
             final var job = jobTracker.newJob(source);
 
