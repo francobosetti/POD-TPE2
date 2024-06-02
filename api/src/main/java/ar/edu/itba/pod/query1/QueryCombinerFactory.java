@@ -3,6 +3,7 @@ package ar.edu.itba.pod.query1;
 import com.hazelcast.mapreduce.Combiner;
 import com.hazelcast.mapreduce.CombinerFactory;
 
+// [infraction_desc, 1] -> [infraction_desc, count]
 public class QueryCombinerFactory implements CombinerFactory<String, Long, Long> {
     @Override
     public Combiner<Long, Long> newCombiner(String infractionDescription) {

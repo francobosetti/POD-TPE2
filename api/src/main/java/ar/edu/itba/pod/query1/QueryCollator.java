@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.StreamSupport;
 
+// Ordena los resultados de la query por cantidad de infracciones y luego por descripción DESC
 public class QueryCollator
         implements Collator<Map.Entry<String, Long>, List<Map.Entry<String, Long>>> {
     @Override

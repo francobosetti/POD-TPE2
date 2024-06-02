@@ -6,13 +6,18 @@ import ar.edu.itba.pod.client.utils.HazelcastUtils;
 import ar.edu.itba.pod.client.utils.TimeLogger;
 import ar.edu.itba.pod.models.Infraction;
 import ar.edu.itba.pod.models.Ticket;
+import ar.edu.itba.pod.query4.*;
 
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IList;
+import com.hazelcast.mapreduce.KeyValueSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -39,6 +44,23 @@ public class Client {
 
         // -Dcity='city'
         City city = City.valueOf(System.getProperty("city"));
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        // -Dfrom='DD/MM/YYYY'
+        // -Dto='DD/MM/YYYY'
+        String fromString = System.getProperty("from");
+        String toString = System.getProperty("to");
+
+        LocalDate from;
+        LocalDate to;
+        try {
+            from = LocalDate.parse(fromString, formatter);
+            to = LocalDate.parse(toString, formatter);
+        } catch (Exception e) {
+            logger.error("Invalid date format");
+            System.exit(1);
+            return;
+        }
 
         HazelcastInstance client;
         try {
@@ -71,11 +93,28 @@ public class Client {
             logger.info("Loading data into Hazelcast");
             timeLogger.logStartedLoadingToHazelcast();
 
+             IList<CountyPlateDateTuple> ticketsList = client.getList("query4-tickets");
+
+            ticketsList.addAll(tickets.stream()
+                    .map(ticket -> new CountyPlateDateTuple(ticket.area(), ticket.plateNumber(), ticket.date()))
+                    .toList());
+
             timeLogger.logFinishedLoadingToHazelcast();
 
             // -------- MapReduce --------
             logger.info("Executing MapReduce");
             timeLogger.logStartedMapReduce();
+
+            final var source = KeyValueSource.fromList(ticketsList);
+            final var jobTracker = client.getJobTracker("g4-query4");
+            final var job = jobTracker.newJob(source);
+
+            final var future =
+                    job.mapper(new QueryMapper(from, to))
+                            .reducer(new QueryReducerFactory())
+                            .submit(new QueryCollator());
+
+            final List<Map.Entry<String, PlateCountPair>> result = future.get();
 
             timeLogger.logFinishedMapReduce();
 
@@ -83,6 +122,16 @@ public class Client {
             logger.info("Writing output to file");
             timeLogger.logStartedWriting();
 
+            CsvUtils.writeCsv(
+                    outPath + "/query4.csv",
+                    new String[] {"County", "Plate", "Tickets"},
+                    result,
+                    entry ->
+                            entry.getKey()
+                                    + ";"
+                                    + entry.getValue().plate()
+                                    + ";"
+                                    + entry.getValue().count());
 
             timeLogger.logFinishedWriting();
 

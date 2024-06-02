@@ -3,6 +3,7 @@ package ar.edu.itba.pod.query1;
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 
+// [infraction_desc, [partial_count1, partial_count2, ...]] -> [infraction_desc, count]
 public class QueryReducerFactory implements ReducerFactory<String, Long, Long> {
 
     @Override
@@ -24,7 +25,7 @@ public class QueryReducerFactory implements ReducerFactory<String, Long, Long> {
         }
 
         @Override
-        public Long  finalizeReduce() {
+        public Long finalizeReduce() {
             return count;
         }
     }

@@ -4,6 +4,7 @@ import ar.edu.itba.pod.models.Ticket;
 import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
 
+// [infraction_desc, infraction_desc] -> [infraction_desc, 1]
 public class QueryMapper implements Mapper<String, String, String, Long> {
 
     @Override

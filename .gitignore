@@ -24,3 +24,5 @@ buildNumber.properties
 
 data/
 results/
+scripts/
+scripts.sh
