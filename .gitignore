@@ -23,6 +23,7 @@ buildNumber.properties
 .idea/
 
 data/
+!tests/data/
 tests/results/
 results/
 scripts/

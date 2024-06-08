@@ -4,7 +4,7 @@
 echo "Query 2: Levantando server"
 
 cd ./server/target/tpe1-g4-server-1.0-SNAPSHOT
-./server.sh > /dev/null 2>&1 &
+./server.sh -Daddress=127.0.0.1 > /dev/null 2>&1 &
 
 cd ../../..
 
@@ -18,7 +18,7 @@ echo "Query 2: Corriendo cliente"
 
 # Query 2
 cd ./client/target/tpe1-g4-client-1.0-SNAPSHOT
-./query2.sh -DinPath=../../../tests/data/ -DoutPath=../../../tests/results/ -Dcity=NYC -Daddresses=192.168.0.100:5701 > /dev/null 2>&1
+./query2.sh -DinPath=../../../tests/data/ -DoutPath=../../../tests/results/ -Dcity=NYC -Daddresses=127.0.0.1:5701 > /dev/null 2>&1
 
 cd ../../..
 
