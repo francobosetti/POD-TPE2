@@ -14,6 +14,12 @@ public class Server {
 
     public static void main(String[] args) {
 
+        // -------- Get options --------
+        // -Daddress=''
+        String address = System.getProperty("address");
+        if (address == null) {
+            address = "192.168.0.*";
+        }
 
         // -------- Configuring Hazelcast --------
         final Config config = new Config();
@@ -24,7 +30,7 @@ public class Server {
         final MulticastConfig multicastConfig = new MulticastConfig();
         final JoinConfig joinConfig = new JoinConfig().setMulticastConfig(multicastConfig);
 
-        final Collection<String> interfaces = Collections.singletonList("192.168.0.*");
+        final Collection<String> interfaces = Collections.singletonList(address);
         final InterfacesConfig interfacesConfig =
                 new InterfacesConfig().setInterfaces(interfaces).setEnabled(true);
 
