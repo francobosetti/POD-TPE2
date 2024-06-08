@@ -13,11 +13,11 @@ public class QueryCollator
     @Override
     public List<Map.Entry<String, Long>> collate(Iterable<Map.Entry<String, Long>> values) {
         // Sort by amount of infractions descending
-        // Then by description descending
+        // Then by description ascending
         final Comparator<Map.Entry<String, Long>> comparator =
-                Comparator.comparing(Map.Entry<String, Long>::getValue)
-                        .thenComparing(Map.Entry::getKey)
-                        .reversed();
+                Map.Entry.<String, Long>comparingByValue()
+                        .reversed()
+                        .thenComparing(Map.Entry.comparingByKey());
 
         return StreamSupport.stream(values.spliterator(), false).sorted(comparator).toList();
     }
