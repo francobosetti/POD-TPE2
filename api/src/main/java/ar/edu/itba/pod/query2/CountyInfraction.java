@@ -12,6 +12,7 @@ public class CountyInfraction implements DataSerializable {
     private String county;
     private String infraction;
 
+    public CountyInfraction() {}
     public CountyInfraction(String county, String infraction) {
         this.county = county;
         this.infraction = infraction;
