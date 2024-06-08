@@ -40,6 +40,21 @@ public class Client {
         // -Dcity='city'
         City city = City.valueOf(System.getProperty("city"));
 
+        // -Dn='n'  | Cuantos registros se quieren leer
+        String n = System.getProperty("n");
+
+        Long recordCount = null;
+
+        if (n != null) {
+            try {
+                recordCount = Long.parseLong(n);
+            } catch (NumberFormatException e) {
+                logger.error("Invalid record count");
+                System.exit(1);
+                return;
+            }
+        }
+
         HazelcastInstance client;
         try {
             client = HazelcastUtils.getHazelcastInstance(addressesString);
@@ -62,7 +77,7 @@ public class Client {
             // Read tickets
             final List<Ticket> tickets;
 
-            tickets = CsvUtils.parseTickets(inPath, city, infractions);
+            tickets = CsvUtils.parseTickets(inPath, city, infractions, recordCount);
 
             timeLogger.logFinishedReading();
 

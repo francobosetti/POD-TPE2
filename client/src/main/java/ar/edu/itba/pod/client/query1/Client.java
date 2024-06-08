@@ -30,7 +30,6 @@ public class Client {
         logger.info("tpe1-g4 query1 Client Starting ...");
 
         // -------- Get options --------
-        // -Daddresses='10.0.0.2:5701;10.0.0.1:5701'
         String addressesString = System.getProperty("addresses");
         if (addressesString == null) {
             logger.error("No addresses provided");
@@ -45,6 +44,21 @@ public class Client {
 
         // -Dcity='city'
         City city = City.valueOf(System.getProperty("city"));
+
+        // -Dn='n'  | Cuantos registros se quieren leer
+        String n = System.getProperty("n");
+
+        Long recordCount = null;
+
+        if (n != null) {
+            try {
+                recordCount = Long.parseLong(n);
+            } catch (NumberFormatException e) {
+                logger.error("Invalid record count");
+                System.exit(1);
+                return;
+            }
+        }
 
         HazelcastInstance client;
         try {
@@ -68,7 +82,7 @@ public class Client {
             // Read tickets
             final List<Ticket> tickets;
 
-            tickets = CsvUtils.parseTickets(inPath, city, infractions);
+            tickets = CsvUtils.parseTickets(inPath, city, infractions, recordCount);
 
             timeLogger.logFinishedReading();
 
