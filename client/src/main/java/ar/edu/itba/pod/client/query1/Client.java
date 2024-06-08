@@ -12,6 +12,7 @@ import ar.edu.itba.pod.query1.QueryMapper;
 import ar.edu.itba.pod.query1.QueryReducerFactory;
 
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.ICompletableFuture;
 import com.hazelcast.core.IList;
 import com.hazelcast.mapreduce.KeyValueSource;
 
@@ -60,6 +61,10 @@ public class Client {
             }
         }
 
+        // -Dcombiner='true' | Si se quiere usar combiner true por defecto
+        String combiner = System.getProperty("combiner");
+        boolean useCombiner = combiner == null || Boolean.parseBoolean(combiner);
+
         HazelcastInstance client;
         try {
             client = HazelcastUtils.getHazelcastInstance(addressesString);
@@ -107,11 +112,20 @@ public class Client {
             final var jobTracker = client.getJobTracker("g4-query1");
             final var job = jobTracker.newJob(source);
 
-            final var future =
-                    job.mapper(new QueryMapper())
-                            .combiner(new QueryCombinerFactory())
-                            .reducer(new QueryReducerFactory())
-                            .submit(new QueryCollator());
+            final ICompletableFuture<List<Map.Entry<String, Long>>> future;
+
+            if (useCombiner) {
+                future = job
+                        .mapper(new QueryMapper())
+                        .combiner(new QueryCombinerFactory())
+                        .reducer(new QueryReducerFactory())
+                        .submit(new QueryCollator());
+            } else {
+                future = job
+                        .mapper(new QueryMapper())
+                        .reducer(new QueryReducerFactory())
+                        .submit(new QueryCollator());
+            }
 
             final List<Map.Entry<String, Long>> result = future.get();
 
