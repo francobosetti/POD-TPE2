@@ -7,8 +7,16 @@ import ar.edu.itba.pod.client.utils.TimeLogger;
 import ar.edu.itba.pod.models.Infraction;
 import ar.edu.itba.pod.models.Ticket;
 
+import ar.edu.itba.pod.query2.QueryCollator;
+import ar.edu.itba.pod.query2.QueryCombinerFactory;
+import ar.edu.itba.pod.query2.QueryMapper;
+import ar.edu.itba.pod.query2.QueryReducerFactory;
+import ar.edu.itba.pod.query2.CountyInfraction;
 import com.hazelcast.core.HazelcastInstance;
 
+import com.hazelcast.core.ICompletableFuture;
+import com.hazelcast.core.IList;
+import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +63,10 @@ public class Client {
             }
         }
 
+        // -Dcombiner='true' | Si se quiere usar combiner true por defecto
+        String combiner = System.getProperty("combiner");
+        boolean useCombiner = combiner == null || Boolean.parseBoolean(combiner);
+
         HazelcastInstance client;
         try {
             client = HazelcastUtils.getHazelcastInstance(addressesString);
@@ -86,11 +98,38 @@ public class Client {
             logger.info("Loading data into Hazelcast");
             timeLogger.logStartedLoadingToHazelcast();
 
+            final IList<CountyInfraction> ticketInfractions = client.getList("query2-ticketInfractions");
+
+            ticketInfractions.addAll(tickets.stream()
+                    .map(ticket -> new CountyInfraction(ticket.area(), ticket.infraction().description()))
+                    .toList());
+
             timeLogger.logFinishedLoadingToHazelcast();
 
             // -------- MapReduce --------
             logger.info("Executing MapReduce");
             timeLogger.logStartedMapReduce();
+
+            final var source = KeyValueSource.fromList(ticketInfractions);
+            final var jobTracker = client.getJobTracker("g4-query2");
+            final var job = jobTracker.newJob(source);
+
+            final ICompletableFuture<List<Map.Entry<String, List<String>>>> future;
+
+            if (useCombiner) {
+                future = job
+                        .mapper(new QueryMapper())
+                        .combiner(new QueryCombinerFactory())
+                        .reducer(new QueryReducerFactory())
+                        .submit(new QueryCollator());
+            } else {
+                future = job
+                        .mapper(new QueryMapper())
+                        .reducer(new QueryReducerFactory())
+                        .submit(new QueryCollator());
+            }
+
+            final List<Map.Entry<String, List<String>>> result = future.get();
 
             timeLogger.logFinishedMapReduce();
 
@@ -98,6 +137,14 @@ public class Client {
             logger.info("Writing output to file");
             timeLogger.logStartedWriting();
 
+            CsvUtils.writeCsv(
+                    outPath + "/query2.csv",
+                    new String[] {"County", "InfractionTop1", "InfractionTop2", "InfractionTop3"},
+                    result,
+                    entry -> entry.getKey()
+                            + ";" + entry.getValue().get(0)
+                            + ";" + entry.getValue().get(1)
+                            + ";" + entry.getValue().get(2));
 
             timeLogger.logFinishedWriting();
 
