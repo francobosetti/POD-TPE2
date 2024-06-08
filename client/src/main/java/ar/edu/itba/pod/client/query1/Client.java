@@ -96,7 +96,7 @@ public class Client {
             logger.info("Loading data into Hazelcast");
             timeLogger.logStartedLoadingToHazelcast();
 
-            final IList<String> ticketInfractions = client.getList("query1-ticketInfractions");
+            final IList<String> ticketInfractions = client.getList("query1");
 
             ticketInfractions.addAll(tickets.stream()
                     .map(ticket -> ticket.infraction().description())

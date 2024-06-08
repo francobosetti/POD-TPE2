@@ -6,8 +6,8 @@ import com.hazelcast.mapreduce.Mapper;
 import java.time.LocalDate;
 
 // Filtra los tickets que no estan dentro del rango de fechas
-// [, (county, plate, date)] -> [county, plate]
-public class QueryMapper implements Mapper<String, CountyPlateDateTuple, String, String> {
+// [county, (plate, date)] -> [county, plate]
+public class QueryMapper implements Mapper<String, PlateDatePair, String, String> {
 
     private final LocalDate startDate;
     private final LocalDate endDate;
@@ -19,13 +19,13 @@ public class QueryMapper implements Mapper<String, CountyPlateDateTuple, String,
 
     @Override
     public void map(
-            String s, CountyPlateDateTuple countyPlateDateTuple, Context<String, String> context) {
+            String county, PlateDatePair plateDatePair, Context<String, String> context) {
 
-        if (countyPlateDateTuple.date().isBefore(startDate)
-                || countyPlateDateTuple.date().isAfter(endDate)) {
+        if (plateDatePair.date().isBefore(startDate)
+                || plateDatePair.date().isAfter(endDate)) {
             return;
         }
 
-        context.emit(countyPlateDateTuple.county(), countyPlateDateTuple.plate());
+        context.emit(county, plateDatePair.plate());
     }
 }

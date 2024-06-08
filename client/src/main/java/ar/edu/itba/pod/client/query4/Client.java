@@ -9,7 +9,7 @@ import ar.edu.itba.pod.models.Ticket;
 import ar.edu.itba.pod.query4.*;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IList;
+import com.hazelcast.core.MultiMap;
 import com.hazelcast.mapreduce.KeyValueSource;
 
 import org.slf4j.Logger;
@@ -108,11 +108,14 @@ public class Client {
             logger.info("Loading data into Hazelcast");
             timeLogger.logStartedLoadingToHazelcast();
 
-             IList<CountyPlateDateTuple> ticketsList = client.getList("query4-tickets");
+             MultiMap<String, PlateDatePair> ticketsMap = client.getMultiMap("query4");
 
-            ticketsList.addAll(tickets.stream()
-                    .map(ticket -> new CountyPlateDateTuple(ticket.area(), ticket.plateNumber(), ticket.date()))
-                    .toList());
+            tickets.forEach(
+                    ticket -> {
+                        ticketsMap.put(
+                                ticket.area(),
+                                new PlateDatePair(ticket.plateNumber(), ticket.date()));
+                    });
 
             timeLogger.logFinishedLoadingToHazelcast();
 
@@ -120,7 +123,7 @@ public class Client {
             logger.info("Executing MapReduce");
             timeLogger.logStartedMapReduce();
 
-            final var source = KeyValueSource.fromList(ticketsList);
+            final var source = KeyValueSource.fromMultiMap(ticketsMap);
             final var jobTracker = client.getJobTracker("g4-query4");
             final var job = jobTracker.newJob(source);
 

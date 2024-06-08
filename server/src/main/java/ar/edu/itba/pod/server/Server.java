@@ -1,8 +1,8 @@
 package ar.edu.itba.pod.server;
 
 import com.hazelcast.config.*;
-
 import com.hazelcast.core.Hazelcast;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,9 +39,16 @@ public class Server {
 
         config.setNetworkConfig(networkConfig);
 
+        final MultiMapConfig multiMapConfig = new MultiMapConfig();
+        multiMapConfig.setName("query4");
+        multiMapConfig.setBackupCount(0);
+        multiMapConfig.setAsyncBackupCount(0);
+        multiMapConfig.setValueCollectionType(MultiMapConfig.ValueCollectionType.LIST);
+        config.addMultiMapConfig(multiMapConfig);
+
         // -------- Starting Hazelcast --------
 
         logger.info("Starting Hazelcast server");
-         Hazelcast.newHazelcastInstance(config);
+        Hazelcast.newHazelcastInstance(config);
     }
 }
