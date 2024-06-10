@@ -5,6 +5,9 @@ echo "================ Compiling ================="
 
 mvn clean package > /dev/null
 
+# Limpio resultados viejos
+rm -r ./results/
+
 # Extraigo el tar en target para server y para client
 tar -xvf ./client/target/tpe1-g4-client-1.0-SNAPSHOT-bin.tar.gz -C ./client/target > /dev/null
 tar -xvf ./server/target/tpe1-g4-server-1.0-SNAPSHOT-bin.tar.gz -C ./server/target > /dev/null

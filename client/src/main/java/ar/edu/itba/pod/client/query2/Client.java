@@ -142,9 +142,9 @@ public class Client {
                     new String[] {"County", "InfractionTop1", "InfractionTop2", "InfractionTop3"},
                     result,
                     entry -> entry.getKey()
-                            + ";" + entry.getValue().get(0)
-                            + ";" + entry.getValue().get(1)
-                            + ";" + entry.getValue().get(2));
+                            + ";" + (entry.getValue().isEmpty()? "-" : entry.getValue().get(0))
+                            + ";" + (entry.getValue().size()<2? "-" : entry.getValue().get(1))
+                            + ";" + (entry.getValue().size()<3? "-" : entry.getValue().get(2)));
 
             timeLogger.logFinishedWriting();
 
