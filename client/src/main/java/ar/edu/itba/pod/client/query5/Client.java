@@ -7,8 +7,12 @@ import ar.edu.itba.pod.client.utils.TimeLogger;
 import ar.edu.itba.pod.models.Infraction;
 import ar.edu.itba.pod.models.Ticket;
 
+import ar.edu.itba.pod.query5.*;
 import com.hazelcast.core.HazelcastInstance;
 
+import com.hazelcast.core.IMap;
+import com.hazelcast.core.MultiMap;
+import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,11 +90,64 @@ public class Client {
             logger.info("Loading data into Hazelcast");
             timeLogger.logStartedLoadingToHazelcast();
 
+            MultiMap<String, Double> map = client.getMultiMap("query5");
+
+            tickets.forEach(
+                    t -> map.put(t.infraction().description(), t.fine())
+            );
+
             timeLogger.logFinishedLoadingToHazelcast();
 
             // -------- MapReduce --------
             logger.info("Executing MapReduce");
             timeLogger.logStartedMapReduce();
+
+            // map desc -> monto
+            // red desc -> promedio
+            // cargo datos...
+
+            final var source = KeyValueSource.fromMultiMap(map);
+            final var jobTracker = client.getJobTracker("g4-query5");
+            final var job = jobTracker.newJob(source);
+
+            final var future =
+                    job.mapper(new QueryMapperDescFine())
+                            .reducer(new QueryReducerFactoryDescGroup())
+                            .submit();
+
+            final Map<String, Double> result = future.get();
+
+            timeLogger.logFinishedMapReduce();
+
+            // -------- Load data 2 --------
+
+            logger.info("Loading data into Hazelcast");
+            timeLogger.logStartedLoadingToHazelcast();
+
+            IMap<String, Double> map2 = client.getMap("query5");
+
+            map2.putAll(result);
+
+            timeLogger.logFinishedLoadingToHazelcast();
+
+            // -------- MapReduce --------
+            logger.info("Executing MapReduce");
+            timeLogger.logStartedMapReduce();
+
+            // map group (prom/100, con division entera) -> desc
+            // red grup -> pares orden alfabetico
+            // ordenar may -> men grupo, ordena los pares por primer valor y segundo en orden alfabetico
+
+            final var source2 = KeyValueSource.fromMap(map2);
+            final var jobTracker2 = client.getJobTracker("g4-query5-2");
+            final var job2 = jobTracker2.newJob(source2);
+
+            final var future2 =
+                    job2.mapper(new QueryMapperGroupDesc())
+                            .reducer(new QueryReducerFactoryGroupPair())
+                            .submit(new QueryCollator());
+
+            final List<Map.Entry<Integer, InfractionPair>> result2 = future2.get();
 
             timeLogger.logFinishedMapReduce();
 
@@ -98,6 +155,16 @@ public class Client {
             logger.info("Writing output to file");
             timeLogger.logStartedWriting();
 
+            CsvUtils.writeCsv(
+                    outPath + "/query5.csv",
+                    new String[] {"Group", "Infraction A", "Infraction B"},
+                    result2,
+                    entry ->
+                            entry.getKey()
+                                    + ";"
+                                    + entry.getValue().in1()
+                                    + ";"
+                                    + entry.getValue().in2());
 
             timeLogger.logFinishedWriting();
 

@@ -46,6 +46,13 @@ public class Server {
         multiMapConfig.setValueCollectionType(MultiMapConfig.ValueCollectionType.LIST);
         config.addMultiMapConfig(multiMapConfig);
 
+        final MultiMapConfig multiMapConfigQ5 = new MultiMapConfig();
+        multiMapConfigQ5.setName("query5");
+        multiMapConfigQ5.setBackupCount(0);
+        multiMapConfigQ5.setAsyncBackupCount(0);
+        multiMapConfigQ5.setValueCollectionType(MultiMapConfig.ValueCollectionType.LIST);
+        config.addMultiMapConfig(multiMapConfigQ5);
+
         // -------- Starting Hazelcast --------
 
         logger.info("Starting Hazelcast server");
