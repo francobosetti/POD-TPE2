@@ -4,7 +4,7 @@ package ar.edu.itba.pod.query5;
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 
-public class QueryReducerFactoryDescGroup implements ReducerFactory<String, Double, Double> {
+public class QueryReducerFactoryDescriptionAverage implements ReducerFactory<String, Double, Double> {
     @Override
     public Reducer<Double, Double> newReducer(String s) {
         return new QueryReducer();

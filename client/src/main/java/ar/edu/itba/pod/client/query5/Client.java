@@ -111,8 +111,8 @@ public class Client {
             final var job = jobTracker.newJob(source);
 
             final var future =
-                    job.mapper(new QueryMapperDescFine())
-                            .reducer(new QueryReducerFactoryDescGroup())
+                    job.mapper(new QueryMapperDescriptionFine())
+                            .reducer(new QueryReducerFactoryDescriptionAverage())
                             .submit();
 
             final Map<String, Double> result = future.get();
@@ -143,7 +143,7 @@ public class Client {
             final var job2 = jobTracker2.newJob(source2);
 
             final var future2 =
-                    job2.mapper(new QueryMapperGroupDesc())
+                    job2.mapper(new QueryMapperGroupDescription())
                             .reducer(new QueryReducerFactoryGroupPair())
                             .submit(new QueryCollator());
 
