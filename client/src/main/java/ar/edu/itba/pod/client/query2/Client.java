@@ -98,7 +98,7 @@ public class Client {
             logger.info("Loading data into Hazelcast");
             timeLogger.logStartedLoadingToHazelcast();
 
-            final IList<CountyInfraction> ticketInfractions = client.getList("query2-ticketInfractions");
+            final IList<CountyInfraction> ticketInfractions = client.getList("query2");
 
             ticketInfractions.addAll(tickets.stream()
                     .map(ticket -> new CountyInfraction(ticket.area(), ticket.infraction().description()))
