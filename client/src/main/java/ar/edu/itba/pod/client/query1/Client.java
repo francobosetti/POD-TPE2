@@ -28,7 +28,7 @@ public class Client {
     private static Logger logger = LoggerFactory.getLogger(Client.class);
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        logger.info("tpe1-g4 query1 Client Starting ...");
+        logger.info("tpe2-g4 query1 Client Starting ...");
 
         // -------- Get options --------
         String addressesString = System.getProperty("addresses");
@@ -151,6 +151,6 @@ public class Client {
         }
 
         client.shutdown();
-        logger.info("tpe1-g4 query1 Client Finished");
+        logger.info("tpe2-g4 query1 Client Finished");
     }
 }

@@ -15,21 +15,21 @@ mvn clean install
 In the directories server/target and client/target there will be .tar.gz extension files. You will have to decompress them.
 You can do it with the following commands:
 ```bash
-tar -xvf server/target/tpe1-g4-server-1.0-SNAPSHOT-bin.tar.gz
-tar -xvf client/target/tpe1-g4-client-1.0-SNAPSHOT-bin.tar.gz
+tar -xvf server/target/tpe2-g4-server-1.0-SNAPSHOT-bin.tar.gz
+tar -xvf client/target/tpe2-g4-client-1.0-SNAPSHOT-bin.tar.gz
 ```
 
 After that, you will need to give execution permissions to the scripts inside the directories created from the compressed files
 
 For the Server:
 ```bash
-cd tpe1-g4-server-1.0-SNAPSHOT
+cd tpe2-g4-server-1.0-SNAPSHOT
 chmod u+x ./server.sh
 ```
 
 For the Clients:
 ```bash
-cd tpe1-g4-client-1.0-SNAPSHOT
+cd tpe2-g4-client-1.0-SNAPSHOT
 chmod u+x ./query1.sh
 chmod u+x ./query2.sh
 chmod u+x ./query3.sh
@@ -43,7 +43,7 @@ Now everything is ready to use
 
 ### Server
 
-First we have to enter the folder tpe1-g4-server-1.0-SNAPSHOT
+First we have to enter the folder tpe2-g4-server-1.0-SNAPSHOT
 
 Then we can run the server by executing the following command:
 ```bash
@@ -55,7 +55,7 @@ Then we can run the server by executing the following command:
 
 ### Clients
 
-First we have to enter the folder tpe1-g4-client-1.0-SNAPSHOT
+First we have to enter the folder tpe2-g4-client-1.0-SNAPSHOT
 
 Then we can run the clients executing the following commands:
 

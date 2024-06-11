@@ -9,15 +9,15 @@ mvn clean package > /dev/null
 rm -r ./tests/results/
 
 # Extraigo el tar en target para server y para client
-tar -xvf ./client/target/tpe1-g4-client-1.0-SNAPSHOT-bin.tar.gz -C ./client/target > /dev/null
-tar -xvf ./server/target/tpe1-g4-server-1.0-SNAPSHOT-bin.tar.gz -C ./server/target > /dev/null
+tar -xvf ./client/target/tpe2-g4-client-1.0-SNAPSHOT-bin.tar.gz -C ./client/target > /dev/null
+tar -xvf ./server/target/tpe2-g4-server-1.0-SNAPSHOT-bin.tar.gz -C ./server/target > /dev/null
 
 # Chmod para los scripts
-chmod +x ./client/target/tpe1-g4-client-1.0-SNAPSHOT/*
-chmod +x ./server/target/tpe1-g4-server-1.0-SNAPSHOT/*
+chmod +x ./client/target/tpe2-g4-client-1.0-SNAPSHOT/*
+chmod +x ./server/target/tpe2-g4-server-1.0-SNAPSHOT/*
 
-export PATH=$PATH:./client/target/tpe1-g4-client-1.0-SNAPSHOT/lib/
-export PATH=$PATH:./server/target/tpe1-g4-server-1.0-SNAPSHOT/lib/
+export PATH=$PATH:./client/target/tpe2-g4-client-1.0-SNAPSHOT/lib/
+export PATH=$PATH:./server/target/tpe2-g4-server-1.0-SNAPSHOT/lib/
 
 # Corro los scripts de tests en test
 

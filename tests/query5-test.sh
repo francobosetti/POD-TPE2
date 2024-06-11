@@ -3,7 +3,7 @@
 
 echo "Query 5: Levantando server"
 
-cd ./server/target/tpe1-g4-server-1.0-SNAPSHOT
+cd ./server/target/tpe2-g4-server-1.0-SNAPSHOT
 ./server.sh -Daddress=127.0.0.1 > /dev/null 2>&1 &
 
 cd ../../..
@@ -17,7 +17,7 @@ mkdir -p ./tests/results
 echo "Query 5: Corriendo cliente"
 
 # Query 1
-cd ./client/target/tpe1-g4-client-1.0-SNAPSHOT
+cd ./client/target/tpe2-g4-client-1.0-SNAPSHOT
 ./query5.sh -DinPath=../../../tests/data/ -DoutPath=../../../tests/results/ -Dcity=NYC -Daddresses=127.0.0.1:5701 > /dev/null 2>&1
 
 cd ../../..
