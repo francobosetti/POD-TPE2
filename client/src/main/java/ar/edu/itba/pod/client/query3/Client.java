@@ -40,19 +40,32 @@ public class Client {
         // -Dcity='city'
         City city = City.valueOf(System.getProperty("city"));
 
-        // -Dn='n'  | Cuantos registros se quieren leer
-        String n = System.getProperty("n");
+        // -DmaxRecords='maxRecords'  | Cuantos registros se quieren leer
+        String maxRecords = System.getProperty("maxRecords");
 
         Long recordCount = null;
 
-        if (n != null) {
+        if (maxRecords != null) {
             try {
-                recordCount = Long.parseLong(n);
+                recordCount = Long.parseLong(maxRecords);
             } catch (NumberFormatException e) {
                 logger.error("Invalid record count");
                 System.exit(1);
                 return;
             }
+        }
+
+        // -Dn='n' | Cantidad de agencias a mostrar
+        String n = System.getProperty("n");
+
+        Long agenciesCount = null;
+
+        try {
+            agenciesCount = Long.parseLong(n);
+        } catch (NumberFormatException e) {
+            logger.error("Invalid agencies count");
+            System.exit(1);
+            return;
         }
 
         HazelcastInstance client;
@@ -97,7 +110,6 @@ public class Client {
             // -------- Write output --------
             logger.info("Writing output to file");
             timeLogger.logStartedWriting();
-
 
             timeLogger.logFinishedWriting();
 

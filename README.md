@@ -61,7 +61,7 @@ Then we can run the clients executing the following commands:
 
 #### Query 1: Total tickets per infraction
 ```bash
-./query1.sh -Daddresses='xx.xx.xx.xx:yyyy;ww.ww.ww.ww:zzzz' -Dcity=CHI|NYC -DinPath=datasetPath -DoutPath=outPath [-Dn=n -Dcombiner=true|false]
+./query1.sh -Daddresses='xx.xx.xx.xx:yyyy;ww.ww.ww.ww:zzzz' -Dcity=CHI|NYC -DinPath=datasetPath -DoutPath=outPath [-DmaxRecords=maxRecords -Dcombiner=true|false]
 ```
 
 - _Parameters_
@@ -69,12 +69,12 @@ Then we can run the clients executing the following commands:
  - _Dcity_: The city to get the data from, the 2 supported cities are CHI or NYC
  - _DinPath_: Path of the directory containing the dataset
  - _DoutPath_: Path of the directory to put the query results
- - _Dn (optional)_: Maximum number of entries to read from the tickets data file, if not set reads the entire file
+ - _DmaxRecords (optional)_: Maximum number of entries to read from the tickets data file, if not set reads the entire file
  - _Dcombiner (optional)_: Indicates if a combiner will be used, if not set defaults to true
 
 #### Query 2: Top 3 most common infractions in each area
 ```bash
-./query2.sh -Daddresses='xx.xx.xx.xx:yyyy;ww.ww.ww.ww:zzzz' -Dcity=CHI|NYC -DinPath=datasetPath -DoutPath=outPath [-Dn=n -Dcombiner=true|false]
+./query2.sh -Daddresses='xx.xx.xx.xx:yyyy;ww.ww.ww.ww:zzzz' -Dcity=CHI|NYC -DinPath=datasetPath -DoutPath=outPath [-DmaxRecords=maxRecords -Dcombiner=true|false]
 ```
 
 - _Parameters_
@@ -82,24 +82,25 @@ Then we can run the clients executing the following commands:
  - _Dcity_: The city to get the data from, the 2 supported cities are CHI or NYC
  - _DinPath_: Path of the directory containing the dataset
  - _DoutPath_: Path of the directory to put the query results
- - _Dn (optional)_: Maximum number of entries to read from the tickets data file, if not set reads the entire file
+ - _DmaxRecords (optional)_: Maximum number of entries to read from the tickets data file, if not set reads the entire file
  - _Dcombiner (optional)_: Indicates if a combiner will be used, if not set defaults to true
 
 #### Query 3: Top N agencies with the highest revenue percentage
 ```bash
-./query3.sh -Daddresses='xx.xx.xx.xx:yyyy;ww.ww.ww.ww:zzzz' -Dcity=CHI|NYC -DinPath=datasetPath -DoutPath=outPath [-Dn=n]
+./query3.sh -Daddresses='xx.xx.xx.xx:yyyy;ww.ww.ww.ww:zzzz' -Dcity=CHI|NYC -DinPath=datasetPath -DoutPath=outPath -Dn=n [-DmaxRecords=maxRecords]
 ```
 - _Parameters_
  - _Daddresses_: A list of addresses of the cluster nodes
  - _Dcity_: The city to get the data from, the 2 supported cities are CHI or NYC
  - _DinPath_: Path of the directory containing the dataset
  - _DoutPath_: Path of the directory to put the query results
- - _Dn (optional)_: Maximum number of entries to read from the tickets data file, if not set reads the entire file
+ - _Dn_: Number of agencies to show
+ - _DmaxRecords (optional)_: Maximum number of entries to read from the tickets data file, if not set reads the entire file
 
 
 #### Query 4: License plate with the most infractions in each area within the range [from, to]
 ```bash
-./query4.sh -Daddresses='xx.xx.xx.xx:yyyy;ww.ww.ww.ww:zzzz' -Dcity=CHI|NYC -DinPath=datasetPath -DoutPath=outPath -Dfrom='DD/MM/YY' -Dto='DD/MM/YY' [-Dn=n]
+./query4.sh -Daddresses='xx.xx.xx.xx:yyyy;ww.ww.ww.ww:zzzz' -Dcity=CHI|NYC -DinPath=datasetPath -DoutPath=outPath -Dfrom='DD/MM/YY' -Dto='DD/MM/YY' [-DmaxRecords=maxRecords]
 ```
 
 - _Parameters_
@@ -109,18 +110,18 @@ Then we can run the clients executing the following commands:
  - _DoutPath_: Path of the directory to put the query results
  - _Dfrom_: Date where the range starts
  - _Dto_: Date where the range ends
- - _Dn (optional)_: Maximum number of entries to read from the tickets data file, if not set reads the entire file
+ - _DmaxRecords (optional)_: Maximum number of entries to read from the tickets data file, if not set reads the entire file
 
 #### Query 5: Pairs of infractions that have, in groups of hundreds, the same average fine amount
 ```bash
-./query5.sh -Daddresses='xx.xx.xx.xx:yyyy;ww.ww.ww.ww:zzzz' -Dcity=CHI|NYC -DinPath=datasetPath -DoutPath=outPath [-Dn=n]
+./query5.sh -Daddresses='xx.xx.xx.xx:yyyy;ww.ww.ww.ww:zzzz' -Dcity=CHI|NYC -DinPath=datasetPath -DoutPath=outPath [-DmaxRecords=maxRecords]
 ```
 - _Parameters_
  - _Daddresses_: A list of addresses of the cluster nodes
  - _Dcity_: The city to get the data from, the 2 supported cities are CHI or NYC
  - _DinPath_: Path of the directory containing the dataset
  - _DoutPath_: Path of the directory to put the query results
- - _Dn (optional)_: Maximum number of entries to read from the tickets data file, if not set reads the entire file
+ - _DmaxRecords (optional)_: Maximum number of entries to read from the tickets data file, if not set reads the entire file
 
 ## Tests
 
