@@ -137,7 +137,7 @@ public class Client {
 
             CsvUtils.writeCsv(
                     outPath + "/query3.csv",
-                    new String[] {"Agency", "Total revenue percentage"},
+                    new String[] {"Issuing Agency", "Percentage"},
                     result,
                     entry ->
                             entry.getKey()
