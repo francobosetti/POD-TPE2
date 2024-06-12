@@ -142,8 +142,7 @@ public class Client {
                     entry ->
                             entry.getKey()
                                     + ";"
-                                    + entry.getValue());
-
+                                    + String.format("%.2f", entry.getValue()) + "%");
             timeLogger.logFinishedWriting();
 
         } catch (IOException e) {
