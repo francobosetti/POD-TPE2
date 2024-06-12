@@ -21,14 +21,16 @@ public class QueryCollator implements Collator<Map.Entry<String, Double>, List<M
     public List<Map.Entry<String, Double>> collate(Iterable<Map.Entry<String, Double>> values) {
         double totalRevenue = getTotalRevenue(values);
 
-        List<Map.Entry<String, Double>> entries = new ArrayList<>();
+        final List<Map.Entry<String, Double>> entries = new ArrayList<>();
 
         for (Map.Entry<String, Double> entry : values) {
             double percentage = entry.getValue() / totalRevenue * 100;
             entries.add(Map.entry(entry.getKey(), percentage));
         }
 
-        return entries.stream().sorted(Map.Entry.comparingByValue()).limit(N).toList();
+        final Comparator<Map.Entry<String, Double>> comparator = Map.Entry.<String, Double>comparingByValue().reversed();
+
+        return entries.stream().sorted(comparator).limit(N).toList();
     }
 
     private double getTotalRevenue(Iterable<Map.Entry<String, Double>> values) {
