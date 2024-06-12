@@ -7,8 +7,13 @@ import ar.edu.itba.pod.client.utils.TimeLogger;
 import ar.edu.itba.pod.models.Infraction;
 import ar.edu.itba.pod.models.Ticket;
 
+import ar.edu.itba.pod.query3.QueryCollator;
+import ar.edu.itba.pod.query3.QueryMapper;
+import ar.edu.itba.pod.query3.QueryReducerFactory;
 import com.hazelcast.core.HazelcastInstance;
 
+import com.hazelcast.core.MultiMap;
+import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +60,10 @@ public class Client {
             }
         }
 
+        // -Dcombiner='true' | Si se quiere usar combiner true por defecto
+        String combiner = System.getProperty("combiner");
+        boolean useCombiner = combiner == null || Boolean.parseBoolean(combiner);
+
         // -Dn='n' | Cantidad de agencias a mostrar
         String n = System.getProperty("n");
 
@@ -99,17 +108,41 @@ public class Client {
             logger.info("Loading data into Hazelcast");
             timeLogger.logStartedLoadingToHazelcast();
 
+            final MultiMap<String, Double> finesMap = client.getMultiMap("query3");
+
+            tickets.forEach(ticket -> finesMap.put(ticket.agency(), ticket.fine()));
+
             timeLogger.logFinishedLoadingToHazelcast();
 
             // -------- MapReduce --------
             logger.info("Executing MapReduce");
             timeLogger.logStartedMapReduce();
 
+            final var source = KeyValueSource.fromMultiMap(finesMap);
+            final var jobTracker = client.getJobTracker("g4-query3");
+            final var job = jobTracker.newJob(source);
+
+            final var future =
+                    job.mapper(new QueryMapper())
+                            .reducer(new QueryReducerFactory())
+                            .submit(new QueryCollator(agenciesCount));
+
+            final List<Map.Entry<String, Double>> result = future.get();
+
             timeLogger.logFinishedMapReduce();
 
             // -------- Write output --------
             logger.info("Writing output to file");
             timeLogger.logStartedWriting();
+
+            CsvUtils.writeCsv(
+                    outPath + "/query3.csv",
+                    new String[] {"Agency", "Total revenue percentage"},
+                    result,
+                    entry ->
+                            entry.getKey()
+                                    + ";"
+                                    + entry.getValue());
 
             timeLogger.logFinishedWriting();
 

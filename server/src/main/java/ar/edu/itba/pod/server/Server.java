@@ -39,6 +39,13 @@ public class Server {
 
         config.setNetworkConfig(networkConfig);
 
+        final MultiMapConfig multiMapConfigQ3 = new MultiMapConfig();
+        multiMapConfigQ3.setName("query3");
+        multiMapConfigQ3.setBackupCount(0);
+        multiMapConfigQ3.setAsyncBackupCount(0);
+        multiMapConfigQ3.setValueCollectionType(MultiMapConfig.ValueCollectionType.LIST);
+        config.addMultiMapConfig(multiMapConfigQ3);
+
         final MultiMapConfig multiMapConfig = new MultiMapConfig();
         multiMapConfig.setName("query4");
         multiMapConfig.setBackupCount(0);
