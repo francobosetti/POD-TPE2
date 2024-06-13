@@ -22,7 +22,10 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Client {
     private static Logger logger = LoggerFactory.getLogger(Client.class);
@@ -118,7 +121,13 @@ public class Client {
 
             final MultiMap<String, Double> finesMap = client.getMultiMap("query3");
 
-            tickets.forEach(ticket -> finesMap.put(ticket.agency(), ticket.fine()));
+            ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+            final List<CompletableFuture<Void>> futures = tickets.stream().map(ticket -> CompletableFuture.runAsync(() -> finesMap.put(ticket.agency(), ticket.fine()), executor)).toList();
+
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+
+            executor.shutdown();
 
             timeLogger.logFinishedLoadingToHazelcast();
 
@@ -151,14 +160,7 @@ public class Client {
             logger.info("Writing output to file");
             timeLogger.logStartedWriting();
 
-            CsvUtils.writeCsv(
-                    outPath + "/query3.csv",
-                    new String[] {"Issuing Agency", "Percentage"},
-                    result,
-                    entry ->
-                            entry.getKey()
-                                    + ";"
-                                    + String.format("%.2f", entry.getValue()) + "%");
+            CsvUtils.writeCsv(outPath + "/query3.csv", new String[]{"Issuing Agency", "Percentage"}, result, entry -> entry.getKey() + ";" + String.format("%.2f", entry.getValue()) + "%");
             timeLogger.logFinishedWriting();
 
         } catch (IOException e) {

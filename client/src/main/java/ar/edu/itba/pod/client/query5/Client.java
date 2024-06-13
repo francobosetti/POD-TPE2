@@ -19,7 +19,10 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Client {
     private static Logger logger = LoggerFactory.getLogger(Client.class);
@@ -92,9 +95,16 @@ public class Client {
 
             MultiMap<String, Double> map = client.getMultiMap("query5");
 
-            tickets.forEach(
-                    t -> map.put(t.infraction().description(), t.fine())
-            );
+            ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+            List<CompletableFuture<Void>> futures = tickets.stream()
+                    .map(t -> CompletableFuture.runAsync(() -> map.put(t.infraction().description(), t.fine()), executor))
+                    .toList();
+
+
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+
+            executor.shutdown();
 
             timeLogger.logFinishedLoadingToHazelcast();
 

@@ -20,7 +20,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Client {
     private static Logger logger = LoggerFactory.getLogger(Client.class);
@@ -110,12 +113,15 @@ public class Client {
 
              MultiMap<String, PlateDatePair> ticketsMap = client.getMultiMap("query4");
 
-            tickets.forEach(
-                    ticket -> {
-                        ticketsMap.put(
-                                ticket.area(),
-                                new PlateDatePair(ticket.plateNumber(), ticket.date()));
-                    });
+            ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+            final List<CompletableFuture<Void>> futures = tickets.stream()
+                    .map(ticket -> CompletableFuture.runAsync(() -> ticketsMap.put(ticket.area(), new PlateDatePair(ticket.plateNumber(), ticket.date())), executor))
+                    .toList();
+
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+
+            executor.shutdown();
 
             timeLogger.logFinishedLoadingToHazelcast();
 
