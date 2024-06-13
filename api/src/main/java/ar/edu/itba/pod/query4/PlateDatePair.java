@@ -12,14 +12,12 @@ public final class PlateDatePair implements DataSerializable {
     private String plate;
     private LocalDate date;
 
-    public PlateDatePair() {
-    }
+    public PlateDatePair() {}
 
     public PlateDatePair(String plate, LocalDate date) {
         this.plate = plate;
         this.date = date;
     }
-
 
     public String plate() {
         return plate;
@@ -34,8 +32,7 @@ public final class PlateDatePair implements DataSerializable {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
         var that = (PlateDatePair) obj;
-        return Objects.equals(this.plate, that.plate)
-                && Objects.equals(this.date, that.date);
+        return Objects.equals(this.plate, that.plate) && Objects.equals(this.date, that.date);
     }
 
     @Override
@@ -45,13 +42,7 @@ public final class PlateDatePair implements DataSerializable {
 
     @Override
     public String toString() {
-        return "CountyPlateDateTuple["
-                + "plate="
-                + plate
-                + ", "
-                + "date="
-                + date
-                + ']';
+        return "CountyPlateDateTuple[" + "plate=" + plate + ", " + "date=" + date + ']';
     }
 
     @Override

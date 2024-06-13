@@ -1,11 +1,7 @@
 package ar.edu.itba.pod.query3;
 
-import ar.edu.itba.pod.query4.PlateCountPair;
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class QueryReducerFactory implements ReducerFactory<String, Double, Double> {
 
@@ -16,6 +12,7 @@ public class QueryReducerFactory implements ReducerFactory<String, Double, Doubl
 
     private class QueryReducer extends Reducer<Double, Double> {
         private double revenue;
+
         @Override
         public void beginReduce() {
             revenue = 0;

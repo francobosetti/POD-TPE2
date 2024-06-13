@@ -24,7 +24,6 @@ public class HazelcastUtils {
         return HazelcastClient.newHazelcastClient(clientConfig);
     }
 
-
     private static String[] getAddresses(String addressesString) {
         String[] addresses = addressesString.split(";");
 

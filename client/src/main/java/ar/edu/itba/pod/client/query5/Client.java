@@ -6,13 +6,13 @@ import ar.edu.itba.pod.client.utils.HazelcastUtils;
 import ar.edu.itba.pod.client.utils.TimeLogger;
 import ar.edu.itba.pod.models.Infraction;
 import ar.edu.itba.pod.models.Ticket;
-
 import ar.edu.itba.pod.query5.*;
-import com.hazelcast.core.HazelcastInstance;
 
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.core.MultiMap;
 import com.hazelcast.mapreduce.KeyValueSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,12 +95,20 @@ public class Client {
 
             MultiMap<String, Double> map = client.getMultiMap("query5");
 
-            ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+            ExecutorService executor =
+                    Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-            List<CompletableFuture<Void>> futures = tickets.stream()
-                    .map(t -> CompletableFuture.runAsync(() -> map.put(t.infraction().description(), t.fine()), executor))
-                    .toList();
-
+            List<CompletableFuture<Void>> futures =
+                    tickets.stream()
+                            .map(
+                                    t ->
+                                            CompletableFuture.runAsync(
+                                                    () ->
+                                                            map.put(
+                                                                    t.infraction().description(),
+                                                                    t.fine()),
+                                                    executor))
+                            .toList();
 
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 
@@ -146,7 +154,8 @@ public class Client {
 
             // map group (prom/100, con division entera) -> desc
             // red grup -> pares orden alfabetico
-            // ordenar may -> men grupo, ordena los pares por primer valor y segundo en orden alfabetico
+            // ordenar may -> men grupo, ordena los pares por primer valor y segundo en orden
+            // alfabetico
 
             final var source2 = KeyValueSource.fromMap(map2);
             final var jobTracker2 = client.getJobTracker("g4-query5-2");

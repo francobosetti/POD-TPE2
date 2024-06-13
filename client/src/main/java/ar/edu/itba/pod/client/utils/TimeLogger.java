@@ -58,11 +58,9 @@ public class TimeLogger implements Closeable {
         writer.close();
     }
 
-
     private void writeWithTimeStamps(String message) throws IOException {
         LocalDateTime now = LocalDateTime.now();
         String formattedNow = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         writer.write(formattedNow + " - " + message + "\n");
     }
-
 }

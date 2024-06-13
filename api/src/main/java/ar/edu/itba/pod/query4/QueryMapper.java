@@ -18,11 +18,9 @@ public class QueryMapper implements Mapper<String, PlateDatePair, String, String
     }
 
     @Override
-    public void map(
-            String county, PlateDatePair plateDatePair, Context<String, String> context) {
+    public void map(String county, PlateDatePair plateDatePair, Context<String, String> context) {
 
-        if (plateDatePair.date().isBefore(startDate)
-                || plateDatePair.date().isAfter(endDate)) {
+        if (plateDatePair.date().isBefore(startDate) || plateDatePair.date().isAfter(endDate)) {
             return;
         }
 

@@ -11,8 +11,7 @@ public final class InfractionPair implements DataSerializable, Comparable<Infrac
     private String in1;
     private String in2;
 
-    public InfractionPair() {
-    }
+    public InfractionPair() {}
 
     public InfractionPair(String in1, String in2) {
         this.in1 = in1;
@@ -27,8 +26,6 @@ public final class InfractionPair implements DataSerializable, Comparable<Infrac
         return in2;
     }
 
-
-
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
@@ -40,7 +37,7 @@ public final class InfractionPair implements DataSerializable, Comparable<Infrac
     @Override
     public int compareTo(InfractionPair that) {
         int result = this.in1.compareTo(that.in1);
-        if(result == 0) {
+        if (result == 0) {
             result = this.in2.compareTo(that.in2);
         }
         return result;

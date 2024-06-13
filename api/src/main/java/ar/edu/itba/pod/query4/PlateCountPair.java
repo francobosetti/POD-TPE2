@@ -11,8 +11,7 @@ public final class PlateCountPair implements DataSerializable, Comparable<PlateC
     private String plate;
     private Long count;
 
-    public PlateCountPair() {
-    }
+    public PlateCountPair() {}
 
     public PlateCountPair(String plate, Long count) {
         this.plate = plate;

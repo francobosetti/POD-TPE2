@@ -11,8 +11,7 @@ public final class Infraction implements DataSerializable {
     private String id;
     private String description;
 
-    public Infraction() {
-    }
+    public Infraction() {}
 
     public Infraction(String id, String description) {
         this.id = id;

@@ -16,9 +16,7 @@ public final class Ticket implements DataSerializable {
     private String agency;
     private String area;
 
-
-    public Ticket() {
-    }
+    public Ticket() {}
 
     public Ticket(
             String plateNumber,

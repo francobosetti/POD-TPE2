@@ -7,7 +7,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-public class QueryCollator implements Collator<Map.Entry<String, Double>, List<Map.Entry<String, Double>>> {
+public class QueryCollator
+        implements Collator<Map.Entry<String, Double>, List<Map.Entry<String, Double>>> {
     private final long N;
 
     public QueryCollator(long N) {
@@ -25,7 +26,10 @@ public class QueryCollator implements Collator<Map.Entry<String, Double>, List<M
             entries.add(Map.entry(entry.getKey(), percentage));
         }
 
-        final Comparator<Map.Entry<String, Double>> comparator = Map.Entry.<String, Double>comparingByValue().reversed().thenComparing(Map.Entry.comparingByKey());
+        final Comparator<Map.Entry<String, Double>> comparator =
+                Map.Entry.<String, Double>comparingByValue()
+                        .reversed()
+                        .thenComparing(Map.Entry.comparingByKey());
 
         return entries.stream().sorted(comparator).limit(N).toList();
     }

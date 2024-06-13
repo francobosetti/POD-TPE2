@@ -7,12 +7,11 @@ import com.hazelcast.nio.serialization.DataSerializable;
 import java.io.IOException;
 import java.util.Objects;
 
-public class CountyInfractionCount implements DataSerializable, Comparable<CountyInfractionCount>{
+public class CountyInfractionCount implements DataSerializable, Comparable<CountyInfractionCount> {
     private String infraction;
     private Long count;
 
-    public CountyInfractionCount() {
-    }
+    public CountyInfractionCount() {}
 
     public CountyInfractionCount(String infraction, Long count) {
         this.infraction = infraction;
@@ -32,7 +31,8 @@ public class CountyInfractionCount implements DataSerializable, Comparable<Count
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
         var that = (CountyInfractionCount) obj;
-        return Objects.equals(this.infraction, that.infraction) && Objects.equals(this.count, that.count);
+        return Objects.equals(this.infraction, that.infraction)
+                && Objects.equals(this.count, that.count);
     }
 
     @Override

@@ -6,16 +6,16 @@ import ar.edu.itba.pod.client.utils.HazelcastUtils;
 import ar.edu.itba.pod.client.utils.TimeLogger;
 import ar.edu.itba.pod.models.Infraction;
 import ar.edu.itba.pod.models.Ticket;
-
-import ar.edu.itba.pod.query3.QueryCombinerFactory;
 import ar.edu.itba.pod.query3.QueryCollator;
+import ar.edu.itba.pod.query3.QueryCombinerFactory;
 import ar.edu.itba.pod.query3.QueryMapper;
 import ar.edu.itba.pod.query3.QueryReducerFactory;
-import com.hazelcast.core.HazelcastInstance;
 
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ICompletableFuture;
 import com.hazelcast.core.MultiMap;
 import com.hazelcast.mapreduce.KeyValueSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +82,7 @@ public class Client {
             return;
         }
 
-        if(agenciesCount <= 0) {
+        if (agenciesCount <= 0) {
             logger.error("Agencies count must be a positive integer");
             System.exit(1);
             return;
@@ -121,9 +121,19 @@ public class Client {
 
             final MultiMap<String, Double> finesMap = client.getMultiMap("query3");
 
-            ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+            ExecutorService executor =
+                    Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-            final List<CompletableFuture<Void>> futures = tickets.stream().map(ticket -> CompletableFuture.runAsync(() -> finesMap.put(ticket.agency(), ticket.fine()), executor)).toList();
+            final List<CompletableFuture<Void>> futures =
+                    tickets.stream()
+                            .map(
+                                    ticket ->
+                                            CompletableFuture.runAsync(
+                                                    () ->
+                                                            finesMap.put(
+                                                                    ticket.agency(), ticket.fine()),
+                                                    executor))
+                            .toList();
 
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 
@@ -142,14 +152,16 @@ public class Client {
             final ICompletableFuture<List<Map.Entry<String, Double>>> future;
 
             if (useCombiner) {
-                future = job.mapper(new QueryMapper())
-                        .combiner(new QueryCombinerFactory())
-                        .reducer(new QueryReducerFactory())
-                        .submit(new QueryCollator(agenciesCount));
+                future =
+                        job.mapper(new QueryMapper())
+                                .combiner(new QueryCombinerFactory())
+                                .reducer(new QueryReducerFactory())
+                                .submit(new QueryCollator(agenciesCount));
             } else {
-                future = job.mapper(new QueryMapper())
-                        .reducer(new QueryReducerFactory())
-                        .submit(new QueryCollator(agenciesCount));
+                future =
+                        job.mapper(new QueryMapper())
+                                .reducer(new QueryReducerFactory())
+                                .submit(new QueryCollator(agenciesCount));
             }
 
             final List<Map.Entry<String, Double>> result = future.get();
@@ -160,7 +172,11 @@ public class Client {
             logger.info("Writing output to file");
             timeLogger.logStartedWriting();
 
-            CsvUtils.writeCsv(outPath + "/query3.csv", new String[]{"Issuing Agency", "Percentage"}, result, entry -> entry.getKey() + ";" + String.format("%.2f", entry.getValue()) + "%");
+            CsvUtils.writeCsv(
+                    outPath + "/query3.csv",
+                    new String[] {"Issuing Agency", "Percentage"},
+                    result,
+                    entry -> entry.getKey() + ";" + String.format("%.2f", entry.getValue()) + "%");
             timeLogger.logFinishedWriting();
 
         } catch (IOException e) {

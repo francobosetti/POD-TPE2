@@ -27,7 +27,8 @@ public class CsvUtils {
     }
 
     public static List<Ticket> parseTickets(
-            String directory, City city, Map<String, Infraction> infractions, Long recordCount) throws IOException {
+            String directory, City city, Map<String, Infraction> infractions, Long recordCount)
+            throws IOException {
 
         String file = directory + '/' + city.getTicketsFile();
 
@@ -51,7 +52,9 @@ public class CsvUtils {
                 .toList();
     }
 
-    public static <T> void writeCsv(String path, String[] headers, List<T> data, Function<T, String> toRow) throws IOException {
+    public static <T> void writeCsv(
+            String path, String[] headers, List<T> data, Function<T, String> toRow)
+            throws IOException {
         var content = new StringBuilder();
         content.append(String.join(";", headers)).append("\n");
 

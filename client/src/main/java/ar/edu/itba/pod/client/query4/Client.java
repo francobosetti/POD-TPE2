@@ -111,13 +111,24 @@ public class Client {
             logger.info("Loading data into Hazelcast");
             timeLogger.logStartedLoadingToHazelcast();
 
-             MultiMap<String, PlateDatePair> ticketsMap = client.getMultiMap("query4");
+            MultiMap<String, PlateDatePair> ticketsMap = client.getMultiMap("query4");
 
-            ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+            ExecutorService executor =
+                    Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-            final List<CompletableFuture<Void>> futures = tickets.stream()
-                    .map(ticket -> CompletableFuture.runAsync(() -> ticketsMap.put(ticket.area(), new PlateDatePair(ticket.plateNumber(), ticket.date())), executor))
-                    .toList();
+            final List<CompletableFuture<Void>> futures =
+                    tickets.stream()
+                            .map(
+                                    ticket ->
+                                            CompletableFuture.runAsync(
+                                                    () ->
+                                                            ticketsMap.put(
+                                                                    ticket.area(),
+                                                                    new PlateDatePair(
+                                                                            ticket.plateNumber(),
+                                                                            ticket.date())),
+                                                    executor))
+                            .toList();
 
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 

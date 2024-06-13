@@ -98,9 +98,8 @@ public class Client {
 
             final IList<String> ticketInfractions = client.getList("query1");
 
-            ticketInfractions.addAll(tickets.stream()
-                    .map(ticket -> ticket.infraction().description())
-                    .toList());
+            ticketInfractions.addAll(
+                    tickets.stream().map(ticket -> ticket.infraction().description()).toList());
 
             timeLogger.logFinishedLoadingToHazelcast();
 
@@ -115,16 +114,16 @@ public class Client {
             final ICompletableFuture<List<Map.Entry<String, Long>>> future;
 
             if (useCombiner) {
-                future = job
-                        .mapper(new QueryMapper())
-                        .combiner(new QueryCombinerFactory())
-                        .reducer(new QueryReducerFactory())
-                        .submit(new QueryCollator());
+                future =
+                        job.mapper(new QueryMapper())
+                                .combiner(new QueryCombinerFactory())
+                                .reducer(new QueryReducerFactory())
+                                .submit(new QueryCollator());
             } else {
-                future = job
-                        .mapper(new QueryMapper())
-                        .reducer(new QueryReducerFactory())
-                        .submit(new QueryCollator());
+                future =
+                        job.mapper(new QueryMapper())
+                                .reducer(new QueryReducerFactory())
+                                .submit(new QueryCollator());
             }
 
             final List<Map.Entry<String, Long>> result = future.get();
