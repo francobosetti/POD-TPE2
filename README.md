@@ -87,7 +87,7 @@ Then we can run the clients executing the following commands:
 
 #### Query 3: Top N agencies with the highest revenue percentage
 ```bash
-./query3.sh -Daddresses='xx.xx.xx.xx:yyyy;ww.ww.ww.ww:zzzz' -Dcity=CHI|NYC -DinPath=datasetPath -DoutPath=outPath -Dn=n [-DmaxRecords=maxRecords]
+./query3.sh -Daddresses='xx.xx.xx.xx:yyyy;ww.ww.ww.ww:zzzz' -Dcity=CHI|NYC -DinPath=datasetPath -DoutPath=outPath -Dn=n [-DmaxRecords=maxRecords -Dcombiner=true|false]
 ```
 - _Parameters_
  - _Daddresses_: A list of addresses of the cluster nodes
@@ -96,6 +96,8 @@ Then we can run the clients executing the following commands:
  - _DoutPath_: Path of the directory to put the query results
  - _Dn_: Number of agencies to show
  - _DmaxRecords (optional)_: Maximum number of entries to read from the tickets data file, if not set reads the entire file
+ - _Dcombiner (optional)_: Indicates if a combiner will be used, if not set defaults to true
+
 
 
 #### Query 4: License plate with the most infractions in each area within the range [from, to]
