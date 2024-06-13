@@ -7,11 +7,13 @@ import ar.edu.itba.pod.client.utils.TimeLogger;
 import ar.edu.itba.pod.models.Infraction;
 import ar.edu.itba.pod.models.Ticket;
 
+import ar.edu.itba.pod.query3.QueryCombinerFactory;
 import ar.edu.itba.pod.query3.QueryCollator;
 import ar.edu.itba.pod.query3.QueryMapper;
 import ar.edu.itba.pod.query3.QueryReducerFactory;
 import com.hazelcast.core.HazelcastInstance;
 
+import com.hazelcast.core.ICompletableFuture;
 import com.hazelcast.core.MultiMap;
 import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
@@ -122,10 +124,18 @@ public class Client {
             final var jobTracker = client.getJobTracker("g4-query3");
             final var job = jobTracker.newJob(source);
 
-            final var future =
-                    job.mapper(new QueryMapper())
-                            .reducer(new QueryReducerFactory())
-                            .submit(new QueryCollator(agenciesCount));
+            final ICompletableFuture<List<Map.Entry<String, Double>>> future;
+
+            if (useCombiner) {
+                future = job.mapper(new QueryMapper())
+                        .combiner(new QueryCombinerFactory())
+                        .reducer(new QueryReducerFactory())
+                        .submit(new QueryCollator(agenciesCount));
+            } else {
+                future = job.mapper(new QueryMapper())
+                        .reducer(new QueryReducerFactory())
+                        .submit(new QueryCollator(agenciesCount));
+            }
 
             final List<Map.Entry<String, Double>> result = future.get();
 
