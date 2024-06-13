@@ -11,9 +11,6 @@ public class QueryCollator implements Collator<Map.Entry<String, Double>, List<M
     private final long N;
 
     public QueryCollator(long N) {
-        if(N <= 0)
-            throw new IllegalArgumentException("N must be greater than 0");
-
         this.N = N;
     }
 

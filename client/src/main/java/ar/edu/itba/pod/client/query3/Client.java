@@ -79,6 +79,12 @@ public class Client {
             return;
         }
 
+        if(agenciesCount <= 0) {
+            logger.error("Agencies count must be a positive integer");
+            System.exit(1);
+            return;
+        }
+
         HazelcastInstance client;
         try {
             client = HazelcastUtils.getHazelcastInstance(addressesString);
