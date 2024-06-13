@@ -25,7 +25,7 @@ public class QueryCollator implements Collator<Map.Entry<String, Double>, List<M
             entries.add(Map.entry(entry.getKey(), percentage));
         }
 
-        final Comparator<Map.Entry<String, Double>> comparator = Map.Entry.<String, Double>comparingByValue().reversed();
+        final Comparator<Map.Entry<String, Double>> comparator = Map.Entry.<String, Double>comparingByValue().reversed().thenComparing(Map.Entry.comparingByKey());
 
         return entries.stream().sorted(comparator).limit(N).toList();
     }
